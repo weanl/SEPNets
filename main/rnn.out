@@ -1,0 +1,215 @@
+nohup: ignoring input
+2020-03-24 16:01:25.491848: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.1 instructions, but these are available on your machine and could speed up CPU computations.
+2020-03-24 16:01:25.491885: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.2 instructions, but these are available on your machine and could speed up CPU computations.
+2020-03-24 16:01:25.491892: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX instructions, but these are available on your machine and could speed up CPU computations.
+2020-03-24 16:01:25.491897: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX2 instructions, but these are available on your machine and could speed up CPU computations.
+2020-03-24 16:01:25.491902: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use FMA instructions, but these are available on your machine and could speed up CPU computations.
+***  2020-03-24 16:01:20.661183 	 Start runing run_rnn.py
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+input_1 (InputLayer)         (None, 96, 32)            0         
+_________________________________________________________________
+lstm_1 (LSTM)                (None, 32)                8320      
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 32)                0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 32)                1056      
+=================================================================
+Total params: 9,376
+Trainable params: 9,376
+Non-trainable params: 0
+_________________________________________________________________
+(34944, 96, 32)
+(34944, 32)
+Epoch 1/400
+ - 30s - loss: 0.6770
+Epoch 2/400
+ - 28s - loss: 0.6109
+Epoch 3/400
+ - 28s - loss: 0.6012
+Epoch 4/400
+ - 28s - loss: 0.5958
+Epoch 5/400
+ - 28s - loss: 0.5927
+Epoch 6/400
+ - 28s - loss: 0.5900
+Epoch 7/400
+ - 28s - loss: 0.5877
+Epoch 8/400
+ - 28s - loss: 0.5862
+Epoch 9/400
+ - 28s - loss: 0.5843
+Epoch 10/400
+ - 28s - loss: 0.5841
+Epoch 11/400
+ - 28s - loss: 0.5826
+Epoch 12/400
+ - 28s - loss: 0.5813
+Epoch 13/400
+ - 28s - loss: 0.5803
+Epoch 14/400
+ - 28s - loss: 0.5789
+Epoch 15/400
+ - 28s - loss: 0.5781
+Epoch 16/400
+ - 28s - loss: 0.5774
+Epoch 17/400
+ - 28s - loss: 0.5762
+Epoch 18/400
+ - 28s - loss: 0.5760
+Epoch 19/400
+ - 28s - loss: 0.5756
+Epoch 20/400
+ - 28s - loss: 0.5748
+Epoch 21/400
+ - 28s - loss: 0.5741
+Epoch 22/400
+ - 28s - loss: 0.5730
+Epoch 23/400
+ - 28s - loss: 0.5733
+Epoch 24/400
+ - 28s - loss: 0.5727
+Epoch 25/400
+ - 28s - loss: 0.5721
+Epoch 26/400
+ - 28s - loss: 0.5718
+Epoch 27/400
+ - 28s - loss: 0.5721
+Epoch 28/400
+ - 28s - loss: 0.5711
+Epoch 29/400
+ - 28s - loss: 0.5703
+Epoch 30/400
+ - 28s - loss: 0.5700
+Epoch 31/400
+ - 28s - loss: 0.5693
+Epoch 32/400
+ - 28s - loss: 0.5694
+Epoch 33/400
+ - 28s - loss: 0.5695
+Epoch 34/400
+ - 28s - loss: 0.5685
+Epoch 35/400
+ - 28s - loss: 0.5683
+Epoch 36/400
+ - 28s - loss: 0.5674
+Epoch 37/400
+ - 28s - loss: 0.5677
+Epoch 38/400
+ - 28s - loss: 0.5668
+Epoch 39/400
+ - 28s - loss: 0.5666
+Epoch 40/400
+ - 28s - loss: 0.5666
+Epoch 41/400
+ - 28s - loss: 0.5665
+Epoch 42/400
+ - 28s - loss: 0.5665
+Epoch 43/400
+ - 28s - loss: 0.5664
+Epoch 44/400
+ - 28s - loss: 0.5659
+Epoch 45/400
+ - 28s - loss: 0.5655
+Epoch 46/400
+ - 28s - loss: 0.5654
+Epoch 47/400
+ - 28s - loss: 0.5650
+Epoch 48/400
+ - 28s - loss: 0.5655
+Epoch 49/400
+ - 28s - loss: 0.5641
+Epoch 50/400
+ - 28s - loss: 0.5647
+Epoch 51/400
+ - 28s - loss: 0.5647
+Epoch 52/400
+ - 28s - loss: 0.5643
+Using TensorFlow backend.
+Model saved ...  ../../exp_ElectricityLoad/saved_models/rnn/model_weights_32
+(34944, 96, 32)
+(34944, 32)
+(34944, 32)
+mean-overall-mae:	 0.731610455726
+(34944, 32)
+mean-mae:
+ [ 0.77627815  0.6818879   0.53586968  0.95448761  0.80694715  0.57409656
+  0.79355868  0.68936257  0.74688344  0.75037556  0.73552493  0.69116843
+  0.83056101  0.69027254  0.57024576  0.72635069  0.77640444  0.70879757
+  0.86301878  0.76769098  0.57816517  0.85748485  0.96111547  0.79056335
+  0.65437138  0.63450759  0.67148611  0.78433779  0.87491283  0.5219704
+  0.8460137   0.56682352]
+point-overall-mae:	 0.468058809484
+point-mae:
+ [ 0.77056779  0.47180403  0.41528238  0.3558967   0.48000192  0.45081609
+  0.44189219  0.54973717  0.5212825   0.51646831  0.54958267  0.4129537
+  0.49796162  0.19978999  0.42538078  0.51857505  0.51122998  0.47131014
+  0.60995733  0.57171918  0.32140569  0.50940721  0.62775696  0.51723776
+  0.41170241  0.44041552  0.48150038  0.50495095  0.3350551   0.16892388
+  0.47972684  0.43758967]
+rnn_model-overall-mae:	 0.476909642274
+rnn_model-mae:
+ [ 0.62212274  0.42635779  0.46733789  0.55722678  0.48400904  0.44169074
+  0.47324904  0.56374873  0.50115311  0.528574    0.48437625  0.47145741
+  0.50490958  0.23787306  0.46246488  0.43253693  0.45994985  0.43335167
+  0.64783877  0.51425986  0.40135918  0.52368702  0.74345287  0.48770232
+  0.42988695  0.43656812  0.43377322  0.52652441  0.43664393  0.19636102
+  0.54877899  0.38188242]
+***  2020-03-24 16:25:33.342374 	 Exit Successfully.
+	Comsumed Time:  0:24:12.681182 
+
+nohup: ignoring input
+2020-03-25 00:28:37.632757: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.1 instructions, but these are available on your machine and could speed up CPU computations.
+2020-03-25 00:28:37.633293: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.2 instructions, but these are available on your machine and could speed up CPU computations.
+2020-03-25 00:28:37.633363: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX instructions, but these are available on your machine and could speed up CPU computations.
+2020-03-25 00:28:37.633730: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX2 instructions, but these are available on your machine and could speed up CPU computations.
+2020-03-25 00:28:37.634093: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use FMA instructions, but these are available on your machine and could speed up CPU computations.
+Using TensorFlow backend.
+***  2020-03-25 00:28:37.459975 	 Start runing run_rnn.py
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+input_1 (InputLayer)         (None, 96, 32)            0         
+_________________________________________________________________
+lstm_1 (LSTM)                (None, 32)                8320      
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 32)                0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 32)                1056      
+=================================================================
+Total params: 9,376
+Trainable params: 9,376
+Non-trainable params: 0
+_________________________________________________________________
+(34944, 96, 32)
+(34944, 32)
+(34944, 32)
+mean-overall-mae:	 0.731610455726
+(34944, 32)
+mean-mae:
+ [ 0.77627815  0.6818879   0.53586968  0.95448761  0.80694715  0.57409656
+  0.79355868  0.68936257  0.74688344  0.75037556  0.73552493  0.69116843
+  0.83056101  0.69027254  0.57024576  0.72635069  0.77640444  0.70879757
+  0.86301878  0.76769098  0.57816517  0.85748485  0.96111547  0.79056335
+  0.65437138  0.63450759  0.67148611  0.78433779  0.87491283  0.5219704
+  0.8460137   0.56682352]
+point-overall-mae:	 0.468058809484
+point-mae:
+ [ 0.77056779  0.47180403  0.41528238  0.3558967   0.48000192  0.45081609
+  0.44189219  0.54973717  0.5212825   0.51646831  0.54958267  0.4129537
+  0.49796162  0.19978999  0.42538078  0.51857505  0.51122998  0.47131014
+  0.60995733  0.57171918  0.32140569  0.50940721  0.62775696  0.51723776
+  0.41170241  0.44041552  0.48150038  0.50495095  0.3350551   0.16892388
+  0.47972684  0.43758967]
+rnn_model-overall-mae:	 0.476909642274
+rnn_model-mae:
+ [ 0.62212274  0.42635779  0.46733789  0.55722678  0.48400904  0.44169074
+  0.47324904  0.56374873  0.50115311  0.528574    0.48437625  0.47145741
+  0.50490958  0.23787306  0.46246488  0.43253693  0.45994985  0.43335167
+  0.64783877  0.51425986  0.40135918  0.52368702  0.74345287  0.48770232
+  0.42988695  0.43656812  0.43377322  0.52652441  0.43664393  0.19636102
+  0.54877899  0.38188242]
+***  2020-03-25 00:28:46.718315 	 Exit Successfully.
+	Comsumed Time:  0:00:09.258345 
+
