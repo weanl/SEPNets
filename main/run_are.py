@@ -21,11 +21,14 @@ from keras.callbacks import EarlyStopping
 
 from data_loader.generator import cons_ur_data, cons_mv_data
 
-N_VAR = 32
-VARS = ['MT_001', 'MT_002', 'MT_003', 'MT_004', 'MT_005', 'MT_006', 'MT_007', 'MT_008', 'MT_009', 'MT_010',
-        'MT_011', 'MT_012', 'MT_013', 'MT_014', 'MT_015', 'MT_016', 'MT_017', 'MT_018', 'MT_019', 'MT_020',
-        'MT_021', 'MT_022', 'MT_023', 'MT_024', 'MT_025', 'MT_026', 'MT_027', 'MT_028', 'MT_029', 'MT_030',
-        'MT_031', 'MT_032']
+
+EXP_DIR = '../../exp_ElectricityLoad/'
+exp_config, _exp_config = get_config_from_json(EXP_DIR + 'exp_config.json')
+N_VAR = exp_config.N_VAR
+VARS = exp_config.VARS
+
+MODE_LIST = ['train', 'test', 'visual']
+MODE = MODE_LIST[1]
 
 
 def run_train_ARE(exps_dir):
@@ -148,20 +151,16 @@ def run_visual_AREs(exps_dir):
     return
 
 
-MODE_LIST = ['train', 'test', 'visual']
-MODE = MODE_LIST[1]
-
-
 if __name__ == '__main__':
-    print('*** ', datetime.now(), '\t Start runing run_are.py')
+    print('*** ', datetime.now(), '\t Start runing run_are.py\t', EXP_DIR)
     start = datetime.now()
 
     if MODE == 'train':
-        run_train_AREs('../../exp_ElectricityLoad/')
+        run_train_AREs(EXP_DIR)
     elif MODE == 'test':
-        run_test_AREs('../../exp_ElectricityLoad/')
+        run_test_AREs(EXP_DIR)
     elif MODE == 'visual':
-        run_visual_AREs('../../exp_ElectricityLoad/')
+        run_visual_AREs(EXP_DIR)
     else:
         print('Please choose proper mode!!!')
 

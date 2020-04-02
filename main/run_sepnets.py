@@ -21,11 +21,15 @@ from keras.callbacks import EarlyStopping
 
 from data_loader.generator import cons_ur_data, cons_mv_data
 
-N_VAR = 32
-VARS = ['MT_001', 'MT_002', 'MT_003', 'MT_004', 'MT_005', 'MT_006', 'MT_007', 'MT_008', 'MT_009', 'MT_010',
-        'MT_011', 'MT_012', 'MT_013', 'MT_014', 'MT_015', 'MT_016', 'MT_017', 'MT_018', 'MT_019', 'MT_020',
-        'MT_021', 'MT_022', 'MT_023', 'MT_024', 'MT_025', 'MT_026', 'MT_027', 'MT_028', 'MT_029', 'MT_030',
-        'MT_031', 'MT_032']
+
+EXP_DIR = '../../exp_ElectricityLoad/'
+exp_config, _exp_config = get_config_from_json(EXP_DIR + 'exp_config.json')
+N_VAR = exp_config.N_VAR
+VARS = exp_config.VARS
+
+MODE_LIST = ['train', 'test', 'visual']
+MODE = MODE_LIST[1]
+PRETRAIN_TRANABLE = [(True, True)]# [(False, True), (True, True), (True, False)]
 
 
 def run_train_SEPNets(exps_dir, pretrain, trainable):
@@ -156,26 +160,21 @@ def run_visual_SEPNets(exps_dir, pretrain, trainable):
     return
 
 
-MODE_LIST = ['train', 'test', 'visual']
-MODE = MODE_LIST[1]
-PRETRAIN_TRANABLE = [(True, True)]# [(False, True), (True, True), (True, False)]
-
-
 if __name__ == '__main__':
-    print('*** ', datetime.now(), '\t Start runing run_sepnets.py')
+    print('*** ', datetime.now(), '\t Start runing run_sepnets.py\t', EXP_DIR)
     start = datetime.now()
 
     if MODE == 'train':
         [
-            run_train_SEPNets('../../exp_ElectricityLoad/', pretrain, trainable)
+            run_train_SEPNets(EXP_DIR, pretrain, trainable)
             for pretrain, trainable in PRETRAIN_TRANABLE
         ]
     elif MODE == 'test':
         for pretrain, trainable in PRETRAIN_TRANABLE:
-            run_test_SEPNets('../../exp_ElectricityLoad/', pretrain, trainable)
+            run_test_SEPNets(EXP_DIR, pretrain, trainable)
     elif MODE == 'visual':
         for pretrain, trainable in PRETRAIN_TRANABLE:
-            run_visual_SEPNets('../../exp_ElectricityLoad/', pretrain, trainable)
+            run_visual_SEPNets(EXP_DIR, pretrain, trainable)
     else:
         print('Please choose proper mode!!!')
     pass
