@@ -15,8 +15,8 @@ from utils.configs import get_config_from_json
 EXP_DIRS = ['../../exp_ElectricityLoad/', 
             '../../exp_210100063/',
             '../../exp_201812/',
-            '../../exp_210100112']
-EXP_DIR = EXP_DIRS[1]
+            '../../exp_210100112/']
+EXP_DIR = EXP_DIRS[3]
 exp_config, _exp_config = get_config_from_json(EXP_DIR + 'exp_config.json')
 N_VAR = exp_config.N_VAR
 VARS = exp_config.VARS

@@ -22,7 +22,7 @@ from keras.callbacks import EarlyStopping
 EXP_DIRS = ['../../exp_ElectricityLoad/', 
             '../../exp_210100063/',
             '../../exp_201812/',
-            '../../exp_210100112']
+            '../../exp_210100112/']
 EXP_DIR = EXP_DIRS[1]
 exp_config, _exp_config = get_config_from_json(EXP_DIR + 'exp_config.json')
 N_VAR = exp_config.N_VAR
@@ -63,7 +63,7 @@ def run_rnn(exps_dir, mode='train'):
             verbose=2
         )
         #
-        saved_models_file = exps_dir + 'saved_models/rnn/model_weights_' + str(N_VAR) + '.h5'
+        saved_models_file = exps_dir + 'saved_models/rnn/model_weights_' + str(N_VAR)
         model.save_weights(saved_models_file)
         print('Model saved ... ', saved_models_file)
     elif mode == 'test':

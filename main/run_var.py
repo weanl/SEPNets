@@ -7,6 +7,7 @@ curPath = os.path.abspath(os.path.dirname(__file__))
 rootPath = os.path.split(curPath)[0]
 sys.path.append(rootPath)
 
+from utils.configs import get_config_from_json
 import numpy as np
 import pickle
 from data_loader.generator import load_mv_data, cons_mv_data
@@ -18,10 +19,16 @@ from statsmodels.stats.stattools import durbin_watson
 from statsmodels.tsa.api import VAR
 
 
-EXP_DIR = '../../exp_ElectricityLoad/'
+EXP_DIRS = ['../../exp_ElectricityLoad/', 
+            '../../exp_210100063/',
+            '../../exp_201812/',
+            '../../exp_210100112/']
+EXP_DIR = EXP_DIRS[1]
 exp_config, _exp_config = get_config_from_json(EXP_DIR + 'exp_config.json')
 N_VAR = exp_config.N_VAR
 VARS = exp_config.VARS
+Max_Window = exp_config.Max_Window
+Max_Epoch = exp_config.Max_Epoch
 
 MODE_LIST = ['train', 'test', 'visual']
 MODE = MODE_LIST[1]
