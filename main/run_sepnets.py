@@ -27,7 +27,7 @@ EXP_DIRS = ['../../exp_ElectricityLoad/',
             '../../exp_210100063/',
             '../../exp_201812/',
             '../../exp_210100112/']
-EXP_DIR = EXP_DIRS[1]
+EXP_DIR = EXP_DIRS[3]
 exp_config, _exp_config = get_config_from_json(EXP_DIR + 'exp_config.json')
 N_VAR = exp_config.N_VAR
 VARS = exp_config.VARS
@@ -35,8 +35,8 @@ Max_Window = exp_config.Max_Window
 Max_Epoch = exp_config.Max_Epoch
 
 MODE_LIST = ['train', 'test', 'visual']
-MODE = MODE_LIST[1]
-PRETRAIN_TRANABLE = [(True, True)]# [(False, True), (True, True), (True, False)]
+MODE = MODE_LIST[0]
+PRETRAIN_TRANABLE = [(True, True)]  # [(False, True), (True, True), (True, False)]
 
 
 def run_train_SEPNets(exps_dir, pretrain, trainable):
@@ -53,7 +53,7 @@ def run_train_SEPNets(exps_dir, pretrain, trainable):
         ear_weights_files.append(exps_dir+'saved_models/ear/ear_'+cols[n]+'_weights')
 
     args = {}
-    args['look_back'] = 96
+    args['look_back'] = Max_Window
     args['n_var'] = n_var
     args['p_list'] = p_list
     args['se_weights_files'] = ear_weights_files
@@ -68,11 +68,11 @@ def run_train_SEPNets(exps_dir, pretrain, trainable):
     x, y = cons_mv_data(
         data_file=exps_dir + 'dataset/training.csv',
         cols=cols[:N_VAR],
-        look_back=96
+        look_back=Max_Window
     )
     model.fit(
-        x, y, batch_size=32, epochs=400,
-        callbacks=[EarlyStopping(monitor='loss', patience=8, mode='min')],
+        x, y, batch_size=32, epochs=Max_Epoch,
+        callbacks=[EarlyStopping(monitor='loss', patience=3, mode='min')],
         validation_split=0,
         verbose=2
     )
@@ -99,7 +99,7 @@ def run_test_SEPNets(exps_dir, pretrain, trainable):
         ear_weights_files.append(exps_dir+'saved_models/ear/ear_'+cols[n]+'_weights')
     # make model
     args = {}
-    args['look_back'] = 96
+    args['look_back'] = Max_Window
     args['n_var'] = n_var
     args['p_list'] = p_list
     args['se_weights_files'] = ear_weights_files
@@ -113,28 +113,40 @@ def run_test_SEPNets(exps_dir, pretrain, trainable):
     saved_models_file = exps_dir + 'saved_models/sepnets/model_weights_' + \
                         str(pretrain) + '_' + str(trainable) + '_' + str(N_VAR)
     model.load_weights(saved_models_file)
-    # make forecast
-    x, y = cons_mv_data(
+
+    # make testing forecast
+    test_x, test_y = cons_mv_data(
         data_file=exps_dir + 'dataset/testing.csv',
         cols=cols[:N_VAR],
-        look_back=96
+        look_back=Max_Window
     )
-    y_sepnets_pred = model.predict(x)
-    y_point_pred = x[:, -1, :]
+    test_y_sepnets_pred = model.predict(test_x)
+    test_y_point_pred = test_x[:, -1, :]
+    # make training forecast
+    train_x, train_y = cons_mv_data(
+        data_file=exps_dir + 'dataset/training.csv',
+        cols=cols[:N_VAR],
+        look_back=Max_Window
+    )
+    train_y_sepnets_pred = model.predict(train_x)
 
     # mean mae
-    print('mean-overall-mae:\t', mean_mae(y).mean())
-    print('mean-mae:\n', mean_mae(y))
+    print('mean-overall-mae:\t', mean_mae(test_y).mean())
+    print('mean-mae:\n', mean_mae(test_y))
     # pre-point mae
-    print('point-overall-mae:\t', mean_absolute_error(y, y_point_pred))
-    print('point-mae:\n', mean_absolute_error(y, y_point_pred, multioutput='raw_values'))
+    print('point-overall-mae:\t', mean_absolute_error(test_y, test_y_point_pred))
+    print('point-mae:\n', mean_absolute_error(test_y, test_y_point_pred, multioutput='raw_values'))
     # sepnets model mae
-    print('sepnets_model-overall-mae:\t', mean_absolute_error(y, y_sepnets_pred))
-    print('sepnets_model-mae:\n', mean_absolute_error(y, y_sepnets_pred, multioutput='raw_values'))
+    print('sepnets_model-overall-mae:\t', mean_absolute_error(test_y, test_y_sepnets_pred))
+    print('sepnets_model-mae:\n', mean_absolute_error(test_y, test_y_sepnets_pred, multioutput='raw_values'))
 
     saved_results = exps_dir+'results/y_sepnets_pred_'+ \
-                    str(pretrain) + '_' + str(trainable) + '_' + str(N_VAR)
-    np.savez_compressed(saved_results, y=y_sepnets_pred)
+                    str(pretrain) + '_' + str(trainable)
+    np.savez_compressed(
+        saved_results, 
+        train_y_pred=train_y_sepnets_pred,
+        test_y_pred=test_y_sepnets_pred
+        )
     return
 
 
@@ -153,7 +165,7 @@ def run_visual_SEPNets(exps_dir, pretrain, trainable):
         ear_weights_files.append(exps_dir + 'saved_models/ear/ear_' + cols[n] + '_weights')
 
     args = {}
-    args['look_back'] = 96
+    args['look_back'] = Max_Window
     args['n_var'] = n_var
     args['p_list'] = p_list
     args['se_weights_files'] = ear_weights_files

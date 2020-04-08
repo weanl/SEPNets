@@ -23,12 +23,13 @@ EXP_DIRS = ['../../exp_ElectricityLoad/',
             '../../exp_210100063/',
             '../../exp_201812/',
             '../../exp_210100112/']
-EXP_DIR = EXP_DIRS[1]
+EXP_DIR = EXP_DIRS[3]
 exp_config, _exp_config = get_config_from_json(EXP_DIR + 'exp_config.json')
 N_VAR = exp_config.N_VAR
 VARS = exp_config.VARS
 Max_Window = exp_config.Max_Window
 Max_Epoch = exp_config.Max_Epoch
+Period = exp_config.Period
 
 MODE_LIST = ['train', 'test', 'visual']
 MODE = MODE_LIST[1]
@@ -70,7 +71,7 @@ def adfuller_test(series, name, signif=0.05):
 def run_train_var_model(exps_dir):
     n_var = N_VAR
     cols = VARS
-    # 1 load train data
+    # 1 load train data (num, look)
     train_data = load_mv_data(
         data_file=exps_dir + 'dataset/training.csv',
         cols=cols[:n_var]
@@ -86,7 +87,7 @@ def run_train_var_model(exps_dir):
     # log = model.select_order(100)
     # print(log.summary())
 
-    model_fitted = model.fit(maxlags=96)
+    model_fitted = model.fit(maxlags=Period, trend='n')  # modified 'c' as default
     # file_path = exps_dir + 'saved_models/var/training_log.txt'
     # with open(file_path, 'w+') as log_file:
     #     print(model_fitted.summary(), file=log_file)
@@ -105,37 +106,52 @@ def run_train_var_model(exps_dir):
 def run_test_var_model(exps_dir):
     n_var = N_VAR
     cols = VARS
-    # 1 load trained model
+    # load trained model
     file_path = exps_dir + 'saved_models/var/trained_model_' + str(N_VAR) + '.pkl'
     with open(file_path, 'rb') as trained_model_file:
         model_fitted = pickle.load(trained_model_file)
     lag_order = model_fitted.k_ar
     print(lag_order)
-    # 2 load testing data
-    x, y = cons_mv_data(
+
+    # make testing forecast
+    test_x, test_y = cons_mv_data(
         data_file=exps_dir + 'dataset/testing.csv',
         cols=cols[:n_var],
-        look_back=96
+        look_back=Max_Window
     )
-    # 3 make forecast
-    y_var_pred = [
-        model_fitted.forecast(x[n], steps=1)
-        for n in range(x.shape[0])
+    test_y_var_pred = [
+        model_fitted.forecast(test_x[n, -Period:, :], steps=1)
+        for n in range(test_x.shape[0])
     ]
-    y_var_pred = np.concatenate(y_var_pred, axis=0)
-    y_point_pred = x[:, -1, :]
+    test_y_var_pred = np.concatenate(test_y_var_pred, axis=0)   # (batch_size, n_var)
+    test_y_point_pred = test_x[:, -1, :]
+    # make training forecast
+    train_x, train_y = cons_mv_data(
+        data_file=exps_dir + 'dataset/training.csv',
+        cols=cols[:n_var],
+        look_back=Max_Window
+    )
+    train_y_var_pred = [
+        model_fitted.forecast(train_x[n, -Period:, :], steps=1)
+        for n in range(train_x.shape[0])
+    ]
+    train_y_var_pred = np.concatenate(train_y_var_pred, axis=0)
 
     # mean mae
-    print('mean-overall-mae:\t', mean_mae(y).mean())
-    print('mean-mae:\n', mean_mae(y))
+    print('mean-overall-mae:\t', mean_mae(test_y).mean())
+    print('mean-mae:\n', mean_mae(test_y))
     # pre-point mae
-    print('point-overall-mae:\t', mean_absolute_error(y, y_point_pred))
-    print('point-mae:\n', mean_absolute_error(y, y_point_pred, multioutput='raw_values'))
+    print('point-overall-mae:\t', mean_absolute_error(test_y, test_y_point_pred))
+    print('point-mae:\n', mean_absolute_error(test_y, test_y_point_pred, multioutput='raw_values'))
     # var model mae
-    print('var_model-overall-mae:\t', mean_absolute_error(y, y_var_pred))
-    print('var_model-mae:\n', mean_absolute_error(y, y_var_pred, multioutput='raw_values'))
+    print('var_model-overall-mae:\t', mean_absolute_error(test_y, test_y_var_pred))
+    print('var_model-mae:\n', mean_absolute_error(test_y, test_y_var_pred, multioutput='raw_values'))
 
-    np.savez_compressed(exps_dir+'results/y_var_pred', y=y_var_pred)
+    np.savez_compressed(
+        exps_dir+'results/y_var_pred', 
+        train_y_pred=train_y_var_pred,
+        test_y_pred=test_y_var_pred
+        )
     return
 
 

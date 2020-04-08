@@ -23,26 +23,28 @@ EXP_DIRS = ['../../exp_ElectricityLoad/',
             '../../exp_210100063/',
             '../../exp_201812/',
             '../../exp_210100112/']
-EXP_DIR = EXP_DIRS[1]
+EXP_DIR = EXP_DIRS[3]
 exp_config, _exp_config = get_config_from_json(EXP_DIR + 'exp_config.json')
 N_VAR = exp_config.N_VAR
 VARS = exp_config.VARS
 Max_Window = exp_config.Max_Window
 Max_Epoch = exp_config.Max_Epoch
+Skip = exp_config.Skip
+Period = exp_config.Period
 
 MODE_LIST = ['train', 'test', 'visual']
-MODE = MODE_LIST[1]
+MODE = MODE_LIST[0]
 
 
 ARGS = {
-    "window": 4*24,
+    "window": Max_Window,
     'hidRNN': 16,
     'hidCNN': 3,
     'hidSkip': 4,
-    'CNN_kernel': 4,
-    'skip': 4,
-    'ps': 24,
-    'highway_window': 4*24,
+    'CNN_kernel': Skip,
+    'skip': Skip,
+    'ps': Period,
+    'highway_window': Max_Window,
     'dropout': 0.2,
     'output_fun': 'linear',
     'lr': 0.001,
@@ -61,14 +63,14 @@ def run_lstnets_model(exps_dir, args, n_dim=N_VAR, mode='train'):
         x, y = cons_mv_data(
             data_file=exps_dir + 'dataset/training.csv',
             cols=VARS[:N_VAR],
-            look_back=4*24
+            look_back=Max_Window
         )
         # train
         model.fit(
             [x, x],
             y,
             batch_size=32,
-            epochs=400,  # 200
+            epochs=Max_Epoch,  # 200
             callbacks=[EarlyStopping(monitor='loss', patience=3, mode='min')],
             validation_split=0,
             verbose=2
@@ -83,28 +85,38 @@ def run_lstnets_model(exps_dir, args, n_dim=N_VAR, mode='train'):
     else:
         raise ValueError('choose running mode in [train, test]')
 
-    # load testing data
-    x, y = cons_mv_data(
+    # make testing forecast
+    test_x, test_y = cons_mv_data(
         data_file=exps_dir + 'dataset/testing.csv',
         cols=VARS[:N_VAR],
-        look_back=4*24
+        look_back=Max_Window
     )
-    y_lstnet_pred = model.predict([x, x])
-    y_point_pred = x[:, -1, :]
+    test_y_lstnet_pred = model.predict([test_x, test_x])
+    test_y_point_pred = test_x[:, -1, :]
+    # make training forecast
+    train_x, train_y = cons_mv_data(
+        data_file=exps_dir + 'dataset/training.csv',
+        cols=cols,
+        look_back=Max_Window
+    )
+    train_y_lstnets_pred = models.predict([train_x, train_x])
 
     # mean mae
-    print('mean-overall-mae:\t', mean_mae(y).mean())
-    print('mean-mae:\n', mean_mae(y))
+    print('mean-overall-mae:\t', mean_mae(test_y).mean())
+    print('mean-mae:\n', mean_mae(test_y))
     # pre-point mae
-    print('point-overall-mae:\t', mean_absolute_error(y, y_point_pred))
-    print('point-mae:\n', mean_absolute_error(y, y_point_pred, multioutput='raw_values'))
+    print('point-overall-mae:\t', mean_absolute_error(test_y, test_y_point_pred))
+    print('point-mae:\n', mean_absolute_error(test_y, test_y_point_pred, multioutput='raw_values'))
     # lstnet model mae
-    print('lstnet_model-overall-mae:\t', mean_absolute_error(y, y_lstnet_pred))
-    print('lstnet_model-mae:\n', mean_absolute_error(y, y_lstnet_pred, multioutput='raw_values'))
+    print('lstnet_model-overall-mae:\t', mean_absolute_error(test_y, test_y_lstnet_pred))
+    print('lstnet_model-mae:\n', mean_absolute_error(test_y, test_y_lstnet_pred, multioutput='raw_values'))
 
     if mode == 'test':
-        np.savez_compressed(exps_dir + 'results/' + 'y_lstnets_pred_' + str(N_VAR), y=y_lstnet_pred)
-        np.savez_compressed(exps_dir + 'results/' + 'y_truth_32', y=y)
+        np.savez_compressed(
+            exps_dir + 'results/' + 'y_lstnets_pred',
+            train_y_pred=train_y_lstnets_pred, 
+            test_y_pred=test_y_lstnet_pred
+            )
     return
 
 

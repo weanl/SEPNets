@@ -23,7 +23,7 @@ EXP_DIRS = ['../../exp_ElectricityLoad/',
             '../../exp_210100063/',
             '../../exp_201812/',
             '../../exp_210100112/']
-EXP_DIR = EXP_DIRS[1]
+EXP_DIR = EXP_DIRS[3]
 exp_config, _exp_config = get_config_from_json(EXP_DIR + 'exp_config.json')
 N_VAR = exp_config.N_VAR
 VARS = exp_config.VARS
@@ -72,29 +72,39 @@ def run_rnn(exps_dir, mode='train'):
     else:
         raise ValueError('choose running mode in [train, test]')
 
-    x, y = cons_mv_data(
+    # make testing forecast
+    test_x, test_y = cons_mv_data(
         data_file=exps_dir + 'dataset/testing.csv',
         cols=VARS[:N_VAR],
         look_back=Max_Window
     )
-    y_pred = model.predict(x)
-    y_point_pred = x[:, -1, :]
-    # print(y[0], '\n', y_pred[0], '\n', ar_pred[0], '\n', y_res_pred[0])
+    test_y_rnn_pred = model.predict(test_x)
+    test_y_point_pred = test_x[:, -1, :]
+    # make training forecast
+    train_x, train_y cons_mv_data(
+        data_file=exps_dir + 'dataset/training.csv',
+        cols=VARS[:N_VAR],
+        look_back=Max_Window
+    )
+    train_y_rnn_pred = model.predict(train_x)
 
     # mean mae
-    print('mean-overall-mae:\t', mean_mae(y).mean())
-    print('mean-mae:\n', mean_mae(y))
+    print('mean-overall-mae:\t', mean_mae(test_y).mean())
+    print('mean-mae:\n', mean_mae(test_y))
     # pre-point mae
-    print('point-overall-mae:\t', mean_absolute_error(y, y_point_pred))
-    print('point-mae:\n', mean_absolute_error(y, y_point_pred, multioutput='raw_values'))
+    print('point-overall-mae:\t', mean_absolute_error(test_y, test_y_point_pred))
+    print('point-mae:\n', mean_absolute_error(test_y, test_y_point_pred, multioutput='raw_values'))
     # rnn model mae
-    print('rnn_model-overall-mae:\t', mean_absolute_error(y, y_pred))
-    print('rnn_model-mae:\n', mean_absolute_error(y, y_pred, multioutput='raw_values'))
+    print('rnn_model-overall-mae:\t', mean_absolute_error(test_y, test_y_rnn_pred))
+    print('rnn_model-mae:\n', mean_absolute_error(test_y, test_y_rnn_pred, multioutput='raw_values'))
 
     if mode == 'test':
-        y_rnn_pred = y_pred
-        np.savez_compressed(exps_dir + 'results/' + 'y_rnn_pred_' + str(N_VAR), y=y_rnn_pred)
-        pass
+        np.savez_compressed(
+            exps_dir + 'results/y_rnn_pred_', 
+            train_y_pred=train_y_rnn_pred,
+            test_y_pred=test_y_rnn_pred
+            )
+    return
 
 
 if __name__ == '__main__':
