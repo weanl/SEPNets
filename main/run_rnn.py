@@ -31,7 +31,7 @@ Max_Window = exp_config.Max_Window
 Max_Epoch = exp_config.Max_Epoch
 
 MODE_LIST = ['train', 'test', 'visual']
-MODE = MODE_LIST[0]
+MODE = MODE_LIST[1]
 
 
 def run_rnn(exps_dir, mode='train'):
@@ -81,7 +81,7 @@ def run_rnn(exps_dir, mode='train'):
     test_y_rnn_pred = model.predict(test_x)
     test_y_point_pred = test_x[:, -1, :]
     # make training forecast
-    train_x, train_y cons_mv_data(
+    train_x, train_y = cons_mv_data(
         data_file=exps_dir + 'dataset/training.csv',
         cols=VARS[:N_VAR],
         look_back=Max_Window
@@ -100,7 +100,7 @@ def run_rnn(exps_dir, mode='train'):
 
     if mode == 'test':
         np.savez_compressed(
-            exps_dir + 'results/y_rnn_pred_', 
+            exps_dir + 'results/y_rnn_pred', 
             train_y_pred=train_y_rnn_pred,
             test_y_pred=test_y_rnn_pred
             )

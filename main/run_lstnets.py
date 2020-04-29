@@ -33,7 +33,7 @@ Skip = exp_config.Skip
 Period = exp_config.Period
 
 MODE_LIST = ['train', 'test', 'visual']
-MODE = MODE_LIST[0]
+MODE = MODE_LIST[1]
 
 
 ARGS = {
@@ -96,10 +96,10 @@ def run_lstnets_model(exps_dir, args, n_dim=N_VAR, mode='train'):
     # make training forecast
     train_x, train_y = cons_mv_data(
         data_file=exps_dir + 'dataset/training.csv',
-        cols=cols,
+        cols=VARS[:N_VAR],
         look_back=Max_Window
     )
-    train_y_lstnets_pred = models.predict([train_x, train_x])
+    train_y_lstnets_pred = model.predict([train_x, train_x])
 
     # mean mae
     print('mean-overall-mae:\t', mean_mae(test_y).mean())

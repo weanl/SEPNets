@@ -35,7 +35,7 @@ Max_Window = exp_config.Max_Window
 Max_Epoch = exp_config.Max_Epoch
 
 MODE_LIST = ['train', 'test', 'visual']
-MODE = MODE_LIST[0]
+MODE = MODE_LIST[1]
 PRETRAIN_TRANABLE = [(True, True)]  # [(False, True), (True, True), (True, False)]
 
 
